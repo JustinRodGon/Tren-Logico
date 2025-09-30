@@ -70,6 +70,11 @@ public:
         return false;
     }
 
+    list<Pasajero> getPasajeros()
+    {
+        return pasajeros;
+    }
+
     void reasignarPasajeros(int idEliminado, const list<LugarParada> &lugares)
     {
         // Busco la siguiente parada que este disponivle
@@ -114,6 +119,11 @@ public:
 
             cout << "El lugar no existe" << endl;
         }
+    }
+
+    int contadorPasajeros()
+    {
+        return pasajeros.size();
     }
 
     void mostrarPasajeros()
@@ -637,7 +647,7 @@ public:
         return lugaresParada;
     }
 
-    // --------REPORTES-----------
+    // --------REPORTE AMENIDADES-----------
 
     // reporte 1
     // recorrer y ver cuales amenidades hay creadas
@@ -693,8 +703,8 @@ public:
         }
 
         auto it = amenidadesTren.begin(); // me pongo en el primero
-        advance(it, pos - 1); // con advance me muevo en la list
-        return *it; // returna esa posiciion a la que me movi 
+        advance(it, pos - 1);             // con advance me muevo en la list
+        return *it;                       // returna esa posiciion a la que me movi
     }
 
     void reporteAmenidades(int eleccion)
@@ -711,11 +721,174 @@ public:
 
         while (p != nullptr)
         {
-            
-           cout << p->info.nombre << ": " << p->info.mostrarListaAmenidadesPorNombre(amen) << " " << amen << endl;
+
+            cout << p->info.nombre << ": " << p->info.mostrarListaAmenidadesPorNombre(amen) << " " << amen << endl;
             p = p->sig;
         }
-        
+    }
+
+    // --------REPORTE TOTAL DE PASAJEROS-----------
+
+    int totalPasajeros()
+    {
+
+        int totalP = 0;
+        if (inicio == nullptr)
+        {
+            cout << "La lista está vacía" << endl;
+        }
+
+        Nodo *p = inicio;
+
+        while (p != nullptr)
+        {
+
+            totalP += p->info.contadorPasajeros();
+            p = p->sig;
+        }
+
+        return totalP;
+    }
+
+    // --------REPORTE VAGON CON MAS PASAJEROS-----------
+
+    string vagonConMasPasajeros()
+    {
+        string nameV;
+        int mayor = 0;
+        if (inicio == nullptr)
+        {
+            cout << "La lista está vacía" << endl;
+        }
+
+        Nodo *p = inicio;
+
+        while (p != nullptr)
+        {
+
+            int contaPaS = p->info.contadorPasajeros();
+
+            if (contaPaS >= mayor)
+            {
+                mayor = contaPaS;
+                nameV = p->info.nombre;
+            }
+
+            p = p->sig;
+        }
+
+        return nameV;
+    }
+
+    // --------PASAJEROS POR VAGON-----------
+
+    void pasajeroPorVagon()
+    {
+
+        if (inicio == nullptr)
+        {
+            cout << "La lista esta vacia" << endl;
+        }
+
+        Nodo *p = inicio;
+
+        while (p != nullptr)
+        {
+
+            cout << p->info.nombre << ": " << p->info.contadorPasajeros() << " Pasajeros" << endl;
+
+            p = p->sig;
+        }
+    }
+
+
+    void pasajerosPorLugar(const list<Pasajero> &pasajeros) // esta devuelve por vagon
+    {
+
+        string respList;
+        int totalP = 0;
+        int cont = 1;
+
+        auto it = lugaresParada.begin();
+
+        while (it != lugaresParada.end())
+        {
+
+            totalP = 0;
+
+            auto itP = pasajeros.begin();
+
+            while (itP != pasajeros.end())
+            {
+
+                if (itP->lugarParadaId == it->id)
+                {
+                    totalP++;
+                }
+                    
+                ++itP;
+            }
+
+           respList += "Lugar " + std::to_string(cont) + " " + it->nombre +
+            ": " + std::to_string(totalP) + " Pasajeros\n";
+
+                
+
+            ++it;
+            ++cont;
+        }
+
+        cout << respList << endl;
+    }
+
+
+     void pasajerosPorLugarTodos()
+    {
+
+        string respList;
+        int totalP = 0;
+        int cont = 1;
+
+        auto it = lugaresParada.begin();
+
+        while (it != lugaresParada.end())
+        {
+
+            totalP = 0;
+            Nodo *p = inicio;
+
+            while (p != nullptr){
+
+
+             const auto &pasajeros = p->info.getPasajeros();// se usa const para usar la misma lista no crear copias a lo loco 
+
+            auto itP = pasajeros.begin();
+
+            while (itP != pasajeros.end())
+            {
+
+                if (itP->lugarParadaId == it->id)
+                {
+                    totalP++;
+                }
+                    
+                ++itP;
+            }
+
+            p = p->sig;
+
+        }
+
+           respList += "Lugar " + std::to_string(cont) + " " + it->nombre +
+            ": " + std::to_string(totalP) + " Pasajeros\n";
+
+                
+
+            ++it;
+            ++cont;
+        }
+
+        cout << respList << endl;
     }
 };
 
@@ -1227,29 +1400,34 @@ void menuReportes(Tren &tren)
 
             tren.acumularAmenidades();
             tren.mostraMenuAmenidades();
-    
+
             cin >> eleccion;
 
             tren.reporteAmenidades(eleccion);
 
-            break; 
+            break;
         }
         case 2:
-            // Contar total de pasajeros en el tren
+            cout << "Total de pasajeros en el tren: " << tren.totalPasajeros() << endl;
 
             break;
         case 3:
-            // Identificar vagón con mayor número de pasajeros
+            cout << "El vagon con mas pasajeros es el: " << tren.vagonConMasPasajeros() << endl;
 
             break;
         case 4:
-            // Mostrar cantidad de pasajeros por vagón
+
+            tren.pasajeroPorVagon();
 
             break;
         case 5:
-            // Mostrar lugares de parada con cantidad de pasajeros
+        {
+            
+                tren.pasajerosPorLugarTodos();
+           
+        }
 
-            break;
+        break;
         case 0:
             cout << "Volviendo al menú principal..." << endl;
             break;
