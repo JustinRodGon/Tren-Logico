@@ -1,6 +1,6 @@
 # Tren-Lógico
 
-![Estructura del Tren](18c25a3d-e4eb-4439-85a8-85ff1bf8fc8b.png)
+![Estructura del Tren](imagenes/Screenshot%20From%202025-10-06%2022-02-08.png)
 
 ## Descripción General
 
