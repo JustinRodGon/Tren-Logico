@@ -966,7 +966,7 @@ void menuAdministracion(Tren &tren)
         switch (opcion)
         {
         case 1:
-            submenuVagones(tren);
+            submenuVagones(tren);  
             break;
         case 2:
             submenuPasajeros(tren);
